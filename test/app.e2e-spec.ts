@@ -29,7 +29,23 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect({
         status: 'ok',
-        service: 'notifyflow-api',
+        service: 'notifyflow-api'
+    });
+  });
+
+  it('/notifications (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'test@example.com',
+        subject: 'Welcome to NotifyFlow',
+        message: 'Your account is ready.'
+      })
+      .expect(201)
+      .expect({
+        recipient:'test@example.com',
+        subject: 'Welcome to NotifyFlow',
+        message: 'Your account is ready.'
     });
   });
 
