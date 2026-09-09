@@ -42,10 +42,15 @@ describe('AppController (e2e)', () => {
         message: 'Your account is ready.'
       })
       .expect(201)
-      .expect({
+      .expect((response) => {
+        expect(response.body).toEqual({
         recipient:'test@example.com',
         subject: 'Welcome to NotifyFlow',
-        message: 'Your account is ready.'
+        message: 'Your account is ready.',
+        id: expect.any(String),
+        status: 'pending',
+        createdAt: expect.any(String)
+      });
     });
   });
 
