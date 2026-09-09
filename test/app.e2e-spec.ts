@@ -54,6 +54,29 @@ describe('AppController (e2e)', () => {
     });
   });
 
+  it('/notifications (GET) returns an empty list', () => {
+    return request(app.getHttpServer())
+      .get('/notifications')
+      .expect(200)
+      .expect([]);
+  });
+
+  it('/notifications (GET) returns a created notification', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'test@example.com',
+        subject: 'Welcome to NotifyFlow',
+        message: 'Your account is ready.'
+      })
+      .expect(201);
+      
+    await request(app.getHttpServer())
+      .get('/notifications')
+      .expect(200)
+      .expect([created.body]);
+  });
+
   afterEach(async () => {
     await app.close();
   });
