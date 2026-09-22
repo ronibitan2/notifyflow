@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module.js';
+import { ValidationPipe } from '@nestjs/common';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -13,6 +14,7 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
@@ -75,6 +77,50 @@ describe('AppController (e2e)', () => {
       .get('/notifications')
       .expect(200)
       .expect([created.body]);
+  });
+
+  it('/notifications (POST) rejects an invalid email', () => {
+    return request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'not-an-email',
+        subject: 'Welcome to NotifyFlow',
+        message: 'Your account is ready.'
+      })
+      .expect(400);
+  });
+
+  it('/notifications (POST) rejects an empty subject', () => {
+    return request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'test@example.com',
+        subject: '',
+        message: 'Your account is ready.'
+      })
+      .expect(400);
+  });
+
+it('/notifications (POST) rejects an empty message', () => {
+    return request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'test@example.com',
+        subject: 'Welcome to NotifyFlow',
+        message: ''
+      })
+      .expect(400);
+  });
+
+it('/notifications (POST) rejects a non-string message', () => {
+    return request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'test@example.com',
+        subject: 'Welcome to NotifyFlow',
+        message: 123
+      })
+      .expect(400);
   });
 
   afterEach(async () => {
