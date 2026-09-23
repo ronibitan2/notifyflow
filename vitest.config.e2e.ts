@@ -7,5 +7,8 @@ export default defineConfig({
     globals: true,
     root: './',
     include: ['**/*.e2e-spec.ts'],
+    env: {
+      MONGODB_URI: 'mongodb://127.0.0.1:27017/notifyflow_test',
+    },
   },
 });

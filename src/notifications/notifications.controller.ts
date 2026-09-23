@@ -19,8 +19,8 @@ export class NotificationsController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        const notification = this.notificationsService.findOne(id);
+    async findOne(@Param('id') id: string) {
+        const notification = await this.notificationsService.findOne(id);
         if (!notification) {
             throw new NotFoundException('Notification not found');
         }

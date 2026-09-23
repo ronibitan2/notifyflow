@@ -4,7 +4,6 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm test
-RUN npm run test:e2e
 RUN npm run build
 
 FROM node:24-bookworm-slim AS production

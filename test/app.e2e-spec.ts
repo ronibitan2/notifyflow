@@ -4,6 +4,9 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module.js';
 import { ValidationPipe } from '@nestjs/common';
+import { getConnectionToken } from '@nestjs/mongoose';
+import type { Connection } from 'mongoose';
+import { NotificationEntity } from '../src/notifications/notification.schema.js';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -16,6 +19,11 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
+    const connection = app.get<Connection>(getConnectionToken());
+    if (connection.name !== 'notifyflow_test') {
+      throw new Error('Expected the notifyflow_test database');
+    }
+    await connection.model(NotificationEntity.name).deleteMany({});
   });
 
   it('/ (GET)', () => {

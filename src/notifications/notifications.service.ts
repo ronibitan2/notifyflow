@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import type { Notification } from './notification.js';
 import type { CreateNotificationDto } from './dto/create-notification.dto.js';
 import { randomUUID } from 'node:crypto';
+import { InjectModel } from '@nestjs/mongoose';
+import type { Model } from 'mongoose';
+import { NotificationEntity } from './notification.schema.js';
 
 @Injectable()
 export class NotificationsService {
-    private readonly notifications: Notification[] = [];
-    create(dto: CreateNotificationDto): Notification {
+    async create(dto: CreateNotificationDto): Promise<Notification> {
         const notification: Notification = {
             id: randomUUID(),
             recipient: dto.recipient,
@@ -16,17 +18,29 @@ export class NotificationsService {
             createdAt: new Date()
         };
 
-        this.notifications.push(notification);
+        await this.notificationModel.create(notification);
 
         return notification;
     }
 
-    findAll(): Notification[] {
-        return [...this.notifications];
+    async findAll(): Promise<Notification[]> {
+        return this.notificationModel
+        .find({}, { _id: 0, __v: 0 })
+        .lean()
+        .exec();
     }
 
-    findOne(id: string): Notification | undefined {
-        return this.notifications.find(notification => notification.id === id);
+    async findOne(id: string): Promise<Notification | null> {
+        return this.notificationModel.
+        findOne({ id }, { _id: 0, __v: 0 })
+        .lean()
+        .exec();
+
     }
+    
+    constructor(
+        @InjectModel(NotificationEntity.name)
+        private readonly notificationModel: Model<NotificationEntity>,
+    ) {}
     
 }

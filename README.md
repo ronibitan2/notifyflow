@@ -60,12 +60,19 @@ $ npm run test:cov
 ## Run with Docker
 
 ```bash
-docker build -t notifyflow-api:local .
-docker run --rm --name notifyflow-api -p 3001:3000 notifyflow-api:local
+docker compose up -d --build
 ```
 Requires Docker to be installed and running.
 The API is available at http://localhost:3001.
-Notifications are stored in memory and are lost when the container stops.
+Notifications are stored in MongoDB and persist across container restarts using a Docker volume.
+
+To stop the services:
+
+```bash
+docker compose down
+```
+
+This preserves stored data. Adding `-v` deletes the volume and its data.
 
 ## Deployment
 
