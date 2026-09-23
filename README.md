@@ -57,6 +57,16 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Run with Docker
+
+```bash
+docker build -t notifyflow-api:local .
+docker run --rm --name notifyflow-api -p 3001:3000 notifyflow-api:local
+```
+Requires Docker to be installed and running.
+The API is available at http://localhost:3001.
+Notifications are stored in memory and are lost when the container stops.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
