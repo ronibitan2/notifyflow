@@ -101,7 +101,7 @@ describe('AppController (e2e)', () => {
       .expect(400);
   });
 
-it('/notifications (POST) rejects an empty message', () => {
+  it('/notifications (POST) rejects an empty message', () => {
     return request(app.getHttpServer())
       .post('/notifications')
       .send({
@@ -112,7 +112,7 @@ it('/notifications (POST) rejects an empty message', () => {
       .expect(400);
   });
 
-it('/notifications (POST) rejects a non-string message', () => {
+  it('/notifications (POST) rejects a non-string message', () => {
     return request(app.getHttpServer())
       .post('/notifications')
       .send({
@@ -121,6 +121,28 @@ it('/notifications (POST) rejects a non-string message', () => {
         message: 123
       })
       .expect(400);
+  });
+
+  it('/notifications/:id (GET) returns 404 for an unknown id', () => {
+    return request(app.getHttpServer())
+      .get('/notifications/unknown-id')
+      .expect(404);
+  });
+
+  it('/notifications/:id (GET) returns a created notification', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/notifications')
+      .send({
+        recipient:'test@example.com',
+        subject: 'Welcome to NotifyFlow',
+        message: 'Your account is ready.'
+      })
+      .expect(201);
+      
+    await request(app.getHttpServer())
+      .get(`/notifications/${created.body.id}`)
+      .expect(200)
+      .expect(created.body);
   });
 
   afterEach(async () => {
