@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, NotFoundException } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto.js';
 import { NotificationsService } from './notifications.service.js';
 
@@ -16,6 +16,15 @@ export class NotificationsController {
     @Get()
     findAll() {
         return this.notificationsService.findAll();
+    }
+
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        const notification = this.notificationsService.findOne(id);
+        if (!notification) {
+            throw new NotFoundException('Notification not found');
+        }
+        return notification;
     }
 
     

@@ -24,5 +24,9 @@ export class NotificationsService {
     findAll(): Notification[] {
         return [...this.notifications];
     }
+
+    findOne(id: string): Notification | undefined {
+        return this.notifications.find(notification => notification.id === id);
+    }
     
 }
